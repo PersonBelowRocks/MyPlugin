@@ -1,3 +1,5 @@
-/out/
 MyPlugin.iml
-.idea/
+
+# dirs
+/out/
+/.idea/
