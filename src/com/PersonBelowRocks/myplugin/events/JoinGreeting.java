@@ -17,5 +17,4 @@ public class JoinGreeting implements Listener {
         player.sendMessage(ChatColor.AQUA + greeting);
 
     }
-
 }
