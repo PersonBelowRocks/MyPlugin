@@ -1,6 +1,9 @@
 package com.PersonBelowRocks.myplugin;
 
+import com.PersonBelowRocks.myplugin.commands.CommandWand;
 import com.PersonBelowRocks.myplugin.events.JoinGreeting;
+import com.PersonBelowRocks.myplugin.events.WandFunctionality;
+import com.PersonBelowRocks.myplugin.items.ItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.PluginManager;
@@ -13,8 +16,12 @@ public class MyPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        console.sendMessage(ChatColor.GREEN + "[MyPlugin] Is enabled!");
+        ItemManager.init();
+        getCommand("getwand").setExecutor(new CommandWand());
+
         pm.registerEvents(new JoinGreeting(), this);
+        pm.registerEvents(new WandFunctionality(), this);
+        console.sendMessage(ChatColor.GREEN + "[MyPlugin] Is enabled!");
     }
 
     @Override

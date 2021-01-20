@@ -3,3 +3,7 @@ name: MyPlugin
 version: 1.0
 api-version: 1.16
 description: Yo wassup this is my plugin
+commands:
+  getwand:
+    description: Get the Stick of Zeus
+    usage: /<command>
