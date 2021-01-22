@@ -10,8 +10,6 @@ import org.bukkit.inventory.meta.CompassMeta;
 
 import java.util.HashMap;
 
-import static org.bukkit.Bukkit.getServer;
-
 public class TrackerManager {
 
     private static final HashMap<Player, Wrapper> trackers = new HashMap<>();
