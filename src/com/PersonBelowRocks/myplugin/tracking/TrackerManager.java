@@ -21,7 +21,7 @@ public class TrackerManager {
         int maxBareSize = 10; // 10unit for 100%
         int remainPercent = ((100 * remain) / total) / maxBareSize;
         char defaultChar = ' ';
-        String icon = "-";
+        String icon = "■";
         String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
         String bareRemain = bare.substring(remainPercent);
         String bareDone = "[ " +
@@ -37,7 +37,6 @@ public class TrackerManager {
         for (Player tracker : trackers.keySet()) {
 
             hasCompass = false;
-            //if (ItemManager.isEqual(tracker.getInventory().getItemInMainHand(), ItemManager.trackingCompass)) {
 
             Player target = trackers.get(tracker);
             Inventory inv = tracker.getInventory();
@@ -83,19 +82,15 @@ public class TrackerManager {
                 compass.setItemMeta(compassMeta);
                 inv.setItem(itemIndex, compass);
 
-                double dist = tracker.getLocation().distance(target.getLocation());
-
-                dist = Math.round(dist * 100.0) / 100.0;
-
-                int remain = (int) dist;
+                int dist = (int) Math.round(tracker.getLocation().distance(target.getLocation()));
+                int deltaY = (int) Math.round(target.getLocation().getY() - tracker.getLocation().getY());
 
                 tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                         TextComponent.fromLegacyText("§a< "
                                 + target.getName()
-                                + " " + (dist <= 100 ? progressBar(100 - remain, 100) : "[###]")
-                                + " §e" + String.valueOf(dist) + "m §a>"));
-
-                //}
+                                + " §7" + (dist <= 100 ? progressBar(100 - dist + 1, 100) : "§7[#]")
+                                + " §6Δy: " + deltaY
+                                + " | dist: " + dist + "m §a>"));
             } else {
                 return;
             }

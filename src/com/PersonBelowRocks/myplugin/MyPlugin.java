@@ -41,7 +41,7 @@ public class MyPlugin extends JavaPlugin {
             public void run() {
                 TrackerManager.track();
             }
-        }.runTaskTimer(this, 30, 30);
+        }.runTaskTimer(this, 10, 10);
 
         console.sendMessage(ChatColor.GREEN + "[MyPlugin] Is enabled!");
     }
