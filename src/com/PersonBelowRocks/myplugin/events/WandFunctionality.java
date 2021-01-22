@@ -19,8 +19,6 @@ public class WandFunctionality implements Listener {
                     caller.getWorld().strikeLightning(caller.getTargetBlock(null, 128).getLocation());
                     caller.getWorld().createExplosion(caller.getTargetBlock(null, 128).getLocation(),
                             10.0f);
-
-                    caller.sendMessage("§eYou don't have the balls!");
                 }
             }
         }
