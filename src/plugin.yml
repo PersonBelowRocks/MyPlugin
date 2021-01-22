@@ -8,6 +8,6 @@ commands:
     description: Get the Stick of Zeus
     usage: /<command>
 
-  tracker:
+  track:
     description: Get a player tracker
     usage: /<command> [target username]
