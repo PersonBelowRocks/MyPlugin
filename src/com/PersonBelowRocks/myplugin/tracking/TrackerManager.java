@@ -1,6 +1,5 @@
 package com.PersonBelowRocks.myplugin.tracking;
 
-import com.PersonBelowRocks.myplugin.items.ItemManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
@@ -10,6 +9,8 @@ import org.bukkit.inventory.meta.CompassMeta;
 
 import java.util.HashMap;
 
+import static org.bukkit.Bukkit.getServer;
+
 public class TrackerManager {
 
     private static final HashMap<Player, Player> trackers = new HashMap<>();
@@ -18,13 +19,14 @@ public class TrackerManager {
         if (remain > total) {
             throw new IllegalArgumentException();
         }
-        int maxBareSize = 10; // 10unit for 100%
-        int remainPercent = ((100 * remain) / total) / maxBareSize;
+        int maxBareSize = 10;
+        int remainPercent = ((105 * remain) / total) / maxBareSize;
+        getServer().getConsoleSender().sendMessage(String.valueOf(remainPercent));
         char defaultChar = ' ';
         String icon = "■";
         String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
         String bareRemain = bare.substring(remainPercent);
-        String bareDone = "[ " +
+        String bareDone = "[" +
                 icon.repeat(remainPercent);
         return bareDone + bareRemain;
     }
@@ -88,7 +90,7 @@ public class TrackerManager {
                 tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                         TextComponent.fromLegacyText("§a< "
                                 + target.getName()
-                                + " §7" + (dist <= 100 ? progressBar(100 - dist + 1, 100) : "§7[#]")
+                                + " §7" + (dist <= 105 ? progressBar(100 - Math.abs(dist - 5), 100) : "§7[#]")
                                 + " §6Δy: " + deltaY
                                 + " | dist: " + dist + "m §a>"));
             } else {
