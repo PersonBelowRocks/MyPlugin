@@ -7,3 +7,7 @@ commands:
   getwand:
     description: Get the Stick of Zeus
     usage: /<command>
+
+  tracker:
+    description: Get a player tracker
+    usage: /<command> [target username]
