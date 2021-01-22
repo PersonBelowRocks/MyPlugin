@@ -4,6 +4,7 @@ import com.PersonBelowRocks.myplugin.items.ItemManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
@@ -13,23 +14,65 @@ public class TrackerManager {
 
     private static final HashMap<Player, Player> trackers = new HashMap<>();
 
-    public static void track() {
-        for (Player tracker : trackers.keySet()) {
-            if (ItemManager.isEqual(tracker.getInventory().getItemInMainHand(), ItemManager.trackingCompass)) {
+    private static String progressBar(int remain, int total) {
+        if (remain > total) {
+            throw new IllegalArgumentException();
+        }
+        int maxBareSize = 10; // 10unit for 100%
+        int remainPercent = ((100 * remain) / total) / maxBareSize;
+        char defaultChar = ' ';
+        String icon = "-";
+        String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
+        String bareRemain = bare.substring(remainPercent);
+        String bareDone = "[ " +
+                icon.repeat(remainPercent);
+        return bareDone + bareRemain;
+    }
 
-                Player target = trackers.get(tracker);
-                ItemStack compass = tracker.getInventory().getItemInMainHand();
+    public static void track() {
+
+        boolean hasCompass;
+        int itemIndex;
+
+        for (Player tracker : trackers.keySet()) {
+
+            hasCompass = false;
+            //if (ItemManager.isEqual(tracker.getInventory().getItemInMainHand(), ItemManager.trackingCompass)) {
+
+            Player target = trackers.get(tracker);
+            Inventory inv = tracker.getInventory();
+
+            for (itemIndex = 0; itemIndex <= inv.getSize(); itemIndex++) {
+                try {
+                    ItemStack item = inv.getItem(itemIndex);
+                    if (item.getItemMeta().getLore().contains("§8item tracking_compass")) {
+                        hasCompass = true;
+                        break;
+                    }
+                } catch (NullPointerException e) {
+                    continue;
+                }
+            }
+
+            if (hasCompass) {
+                if (!target.isOnline()) {
+                    tracker.getInventory().setItemInMainHand(null);
+                    trackers.remove(tracker);
+                    tracker.sendMessage("§cTarget logged off!");
+                }
+
+                ItemStack compass = inv.getItem(itemIndex);
                 CompassMeta compassMeta = (CompassMeta) compass.getItemMeta();
 
                 if (!tracker.getWorld().getEnvironment().equals(target.getWorld().getEnvironment())) {
-                    tracker.sendMessage("§eTarget is in another dimension!");
-                    tracker.getInventory().setItemInMainHand(null);
                     trackers.remove(tracker);
+                    inv.setItem(itemIndex, null);
+                    tracker.sendMessage("§cTarget is in another dimension! Rerun the command when you are in the same dimension.");
                     return;
                 }
 
                 if (compassMeta == null) {
-                    tracker.getInventory().setItemInMainHand(null);
+                    tracker.getInventory().setItem(itemIndex, null);
                     tracker.sendMessage("§cYour tracking compass was removed!");
                     return;
                 }
@@ -38,16 +81,32 @@ public class TrackerManager {
                 compassMeta.setLodestone(target.getLocation());
 
                 compass.setItemMeta(compassMeta);
-                tracker.getInventory().setItemInMainHand(compass);
+                inv.setItem(itemIndex, compass);
+
+                double dist = tracker.getLocation().distance(target.getLocation());
+
+                dist = Math.round(dist * 100.0) / 100.0;
+
+                int remain = (int) dist;
 
                 tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                        TextComponent.fromLegacyText("§aDistance to Target: ["+ ( ((tracker.getLocation().distance(target.getLocation())) * 10) / 10.0f ) + "]"));
+                        TextComponent.fromLegacyText("§a< "
+                                + target.getName()
+                                + " " + (dist <= 100 ? progressBar(100 - remain, 100) : "[###]")
+                                + " §e" + String.valueOf(dist) + "m §a>"));
 
+                //}
+            } else {
+                return;
             }
         }
     }
 
     public static void trackPlayer(Player carrier, Player target) {
-        trackers.put(carrier, target);
+        if (trackers.containsKey(carrier)) {
+            trackers.replace(carrier, target);
+        } else {
+            trackers.put(carrier, target);
+        }
     }
 }

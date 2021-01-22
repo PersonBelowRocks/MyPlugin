@@ -15,7 +15,9 @@ public class ItemTrackingCompass {
         meta.setDisplayName("§ePlayer Tracking Compass");
 
         List<String> lore = new ArrayList<>();
-        lore.add("§8Tracks players");
+        lore.add("§8item tracking_compass");
+        lore.add("");
+        lore.add("§7Tracks players");
         meta.setLore(lore);
 
         meta.setLodestoneTracked(false);

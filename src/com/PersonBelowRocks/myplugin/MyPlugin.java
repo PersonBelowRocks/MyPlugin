@@ -27,7 +27,7 @@ public class MyPlugin extends JavaPlugin {
 
 
     public void onEnable() {
-        this.saveDefaultConfig();
+        createCustomConfig();
 
         ItemManager.init();
         getCommand("getwand").setExecutor(new CommandWand());
@@ -62,11 +62,12 @@ public class MyPlugin extends JavaPlugin {
             saveResource("my_plugin.yml", false);
         }
 
-        customConfig= new YamlConfiguration();
+        customConfig = new YamlConfiguration();
         try {
             customConfig.load(customConfigFile);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
+        }
     }
 
 }
