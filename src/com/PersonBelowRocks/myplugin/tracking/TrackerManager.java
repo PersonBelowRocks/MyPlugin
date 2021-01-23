@@ -9,16 +9,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Objects;
 
 import static com.PersonBelowRocks.myplugin.tracking.ActionBar.buildActionBar;
 
 public class TrackerManager {
 
     private static final HashMap<Player, Wrapper> trackers = new HashMap<>();
-
-    private static double targetX;
-    private static double targetY;
-    private static double targetZ;
+    private static final LinkedList<Player> errorTrackers = new LinkedList<>();
 
     public static void track() {
 
@@ -55,18 +54,18 @@ public class TrackerManager {
             if (hasCompass) {
                 if (!target.isOnline()) {
                     tracker.getInventory().setItemInMainHand(null);
-                    trackers.remove(tracker);
                     tracker.sendMessage("§cTarget logged off!");
+                    errorTrackers.add(tracker);
                     continue;
                 }
                 if (!tracker.isOnline()) {
-                    trackers.remove(tracker);
+                    errorTrackers.add(tracker);
                     continue;
                 }
                 if (!tracker.getWorld().getEnvironment().equals(target.getWorld().getEnvironment())) {
-                    trackers.remove(tracker);
                     inv.setItem(trackers.get(tracker).getSlot(), null);
                     tracker.sendMessage("§cTarget is in another dimension! Rerun the command when you are in the same dimension.");
+                    errorTrackers.add(tracker);
                     continue;
                 }
 
@@ -86,20 +85,28 @@ public class TrackerManager {
 
                 if (compassMeta == null) {
                     tracker.getInventory().setItem(trackers.get(tracker).getSlot(), null);
-                    trackers.remove(tracker);
+                    errorTrackers.add(tracker);
                     tracker.sendMessage("§cYour tracking compass was removed!");
                     continue;
                 }
 
-                targetX = Math.round(target.getLocation().getX());
-                targetY = Math.round(target.getLocation().getY());
-                targetZ = Math.round(target.getLocation().getZ());
+                double targetX = Math.round(target.getLocation().getX());
+                double targetY = Math.round(target.getLocation().getY());
+                double targetZ = Math.round(target.getLocation().getZ());
 
                 // lol
-                if (Math.abs(compassMeta.getLodestone().getX() - targetX) > 1 ||
-                Math.abs(compassMeta.getLodestone().getY() - targetY) > 1 ||
-                Math.abs(compassMeta.getLodestone().getZ() - targetZ) > 1) {
+                try {
+                    if (Math.abs(Objects.requireNonNull(compassMeta.getLodestone()).getX() - targetX) > 1 ||
+                            Math.abs(compassMeta.getLodestone().getY() - targetY) > 1 ||
+                            Math.abs(compassMeta.getLodestone().getZ() - targetZ) > 1) {
 
+                        compassMeta.setLodestoneTracked(false);
+                        compassMeta.setLodestone(target.getLocation());
+
+                        compass.setItemMeta(compassMeta);
+                        inv.setItem(trackers.get(tracker).getSlot(), compass);
+                    }
+                } catch (NullPointerException e) {
                     compassMeta.setLodestoneTracked(false);
                     compassMeta.setLodestone(target.getLocation());
 
@@ -108,6 +115,14 @@ public class TrackerManager {
                 }
             }
         }
+
+        if (!errorTrackers.isEmpty()) {
+            for (Player errorTracker : errorTrackers) {
+                trackers.remove(errorTracker);
+            }
+            errorTrackers.clear();
+        }
+
     }
 
     public static void trackPlayer(Player carrier, Player target) {

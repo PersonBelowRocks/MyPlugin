@@ -11,7 +11,7 @@ public class WandFunctionality implements Listener {
 
     @EventHandler
     public static void onRightClick(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_AIR) {
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getItem() != null) {
                 if (event.getItem().getItemMeta().equals(ItemManager.wand.getItemMeta())) {
                     Player caller = event.getPlayer();
