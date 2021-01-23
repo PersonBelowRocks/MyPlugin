@@ -6,14 +6,14 @@ import java.text.MessageFormat;
 
 public class ActionBar {
 
-    private final static int remain = 100;
+    private final static int remain = 105;
 
-    public static String progressBar(int remain, int total) {
-        if (remain > total) {
+    public static String progressBar(int pRemain, int total) {
+        if (pRemain > total) {
             throw new IllegalArgumentException();
         }
         int maxBareSize = 10;
-        int remainPercent = ((105 * remain) / total) / maxBareSize;
+        int remainPercent = ((105 * pRemain) / total) / maxBareSize;
         char defaultChar = ' ';
         String icon = "▋";
         String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
@@ -29,10 +29,9 @@ public class ActionBar {
         int deltaY = (int) Math.round(target.getLocation().getY() - carrier.getLocation().getY());
         String name = target.getName();
 
-        String bar = progressBar(remain - Math.abs(dist - 5), remain);
         return MessageFormat.format("§a< {0} §c{1} §6Δy: {2} | dist: {3}m §a>",
                 name,
-                (dist <= 105 ? bar : "§7[#]"),
+                (dist <= 105 ? progressBar(remain - Math.abs(dist - 5), remain) : "§7[#]"),
                 deltaY,
                 dist);
     }

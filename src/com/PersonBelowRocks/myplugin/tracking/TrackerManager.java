@@ -11,8 +11,6 @@ import org.bukkit.inventory.meta.CompassMeta;
 import java.util.HashMap;
 
 import static com.PersonBelowRocks.myplugin.tracking.ActionBar.buildActionBar;
-import static com.PersonBelowRocks.myplugin.tracking.ActionBar.progressBar;
-import static org.bukkit.Bukkit.getServer;
 
 public class TrackerManager {
 
@@ -79,6 +77,8 @@ public class TrackerManager {
                             TextComponent.fromLegacyText(trackers.get(tracker).getActionBar()));
                 } else {
                     trackers.get(tracker).setActionBar(dist, buildActionBar(tracker, target));
+                    tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                            TextComponent.fromLegacyText(buildActionBar(tracker, target)));
                 }
 
                 ItemStack compass = inv.getItem(trackers.get(tracker).getSlot());
@@ -106,9 +106,6 @@ public class TrackerManager {
                     compass.setItemMeta(compassMeta);
                     inv.setItem(trackers.get(tracker).getSlot(), compass);
                 }
-
-                tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                        TextComponent.fromLegacyText(buildActionBar(tracker, target)));
             }
         }
     }
