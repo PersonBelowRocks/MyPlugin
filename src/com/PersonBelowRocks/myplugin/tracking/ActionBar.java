@@ -29,10 +29,10 @@ public class ActionBar {
         int deltaY = (int) Math.round(target.getLocation().getY() - carrier.getLocation().getY());
         String name = target.getName();
 
-        return MessageFormat.format("§a< {0} §c{1} §6Δy: {2} | dist: {3}m §a>",
+        return MessageFormat.format("§a< {0} §c{1} §6{2}dist: {3}m §a>",
                 name,
-                (dist <= 105 ? progressBar(remain - Math.abs(dist - 5), remain) : "§7[#]"),
-                deltaY,
+                (dist <= 105 ? progressBar(remain - Math.abs(dist - 5), remain) : "§a|"),
+                (dist <= 105 ? "Δy: " + deltaY + " | " : ""),
                 dist);
     }
 }

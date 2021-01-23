@@ -17,7 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-
+// todo: add /untrack command
 public class MyPlugin extends JavaPlugin {
 
     private final PluginManager pm = getServer().getPluginManager();
