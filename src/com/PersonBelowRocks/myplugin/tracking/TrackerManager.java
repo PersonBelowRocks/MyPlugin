@@ -14,39 +14,39 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 import static com.PersonBelowRocks.myplugin.tracking.ActionBar.buildActionBar;
+import static org.bukkit.Bukkit.getServer;
 
 public class TrackerManager {
 
     private static final HashMap<Player, Wrapper> trackers = new HashMap<>();
     private static final LinkedList<Player> errorTrackers = new LinkedList<>();
 
-    private static final String requiredLore = "§item tracking_compass";
+    private static final String requiredLore = "§8item tracking_compass";
 
     public static void track() {
 
         boolean hasCompass;
         int itemIndex;
-        int cachedSlot;
 
         for (Player tracker : trackers.keySet()) { // CYCLE THROUGH ALL REGISTERED TRACKERS
 
             // init stuff
             Player target = trackers.get(tracker).getPlayer();
             Inventory inv = tracker.getInventory();
-            cachedSlot = trackers.get(tracker).getSlot();
+            itemIndex = trackers.get(tracker).getSlot();
 
             // determine position and existence of compass in player inventory
             if (!Utils.itemLoreContains(
-                    inv.getItem(cachedSlot),
+                    inv.getItem(itemIndex),
                     requiredLore)) {
                 try {
                     itemIndex = Utils.getIndexFromLore(inv, requiredLore);
+                    trackers.get(tracker).setSlot(itemIndex);
                     hasCompass = true;
                 } catch (NullPointerException e) {
                     hasCompass = false;
                 }
             } else {
-                itemIndex = cachedSlot;
                 hasCompass = true;
             }
 

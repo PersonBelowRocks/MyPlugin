@@ -3,10 +3,10 @@ package com.PersonBelowRocks.myplugin.tracking.util;
 import org.bukkit.entity.Player;
 
 public class Wrapper {
-    Player player;
-    int slot;
-    int dist;
-    String actionBar;
+    private Player player;
+    private int slot;
+    private int dist;
+    private String actionBar;
     public Wrapper(Player player, int slot) {
         this.player = player;
         this.slot = slot;
@@ -33,6 +33,10 @@ public class Wrapper {
 
     public String getActionBar() {
         return this.actionBar;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
 }
