@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 import static com.PersonBelowRocks.myplugin.tracking.ActionBar.buildActionBar;
-import static org.bukkit.Bukkit.getServer;
 
 public class TrackerManager {
 
@@ -134,7 +133,6 @@ public class TrackerManager {
             }
             errorTrackers.clear();
         }
-
     }
 
     public static void trackPlayer(Player carrier, Player target) {
