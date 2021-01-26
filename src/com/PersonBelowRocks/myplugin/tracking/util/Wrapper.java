@@ -1,4 +1,4 @@
-package com.PersonBelowRocks.myplugin.util;
+package com.PersonBelowRocks.myplugin.tracking.util;
 
 import org.bukkit.entity.Player;
 
