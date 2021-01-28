@@ -30,9 +30,11 @@ public class TrackerManager {
         for (Player tracker : trackers.keySet()) { // CYCLE THROUGH ALL REGISTERED TRACKERS
 
             // init stuff
-            Player target = trackers.get(tracker).getPlayer();
+            Wrapper wrapper = trackers.get(tracker);
+
+            Player target = wrapper.getPlayer();
             Inventory inv = tracker.getInventory();
-            itemIndex = trackers.get(tracker).getSlot();
+            itemIndex = wrapper.getSlot();
 
             // determine position and existence of compass in player inventory
             if (!Utils.itemLoreContains(
@@ -40,7 +42,7 @@ public class TrackerManager {
                     requiredLore)) {
                 try {
                     itemIndex = Utils.getIndexFromLore(inv, requiredLore);
-                    trackers.get(tracker).setSlot(itemIndex);
+                    wrapper.setSlot(itemIndex);
                     hasCompass = true;
                 } catch (NullPointerException e) {
                     hasCompass = false;
@@ -53,22 +55,29 @@ public class TrackerManager {
             if (hasCompass) {
                 // handle if target logged off
                 if (!target.isOnline()) {
-                    tracker.getInventory().setItem(itemIndex, null);
+                    inv.setItem(itemIndex, null);
                     tracker.sendMessage("§cTarget logged off!");
+                    tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                            TextComponent.fromLegacyText(""));
                     errorTrackers.add(tracker);
                     continue;
                 }
 
                 // handle if compass carrier / tracker logged off
                 if (!tracker.isOnline()) {
+                    inv.setItem(itemIndex, null);
                     errorTrackers.add(tracker);
                     continue;
                 }
+
+                wrapper.setCompassState(true);
 
                 // handle if carrier and target are in different dimensions
                 if (!tracker.getWorld().getEnvironment().equals(target.getWorld().getEnvironment())) {
                     inv.setItem(itemIndex, null);
                     tracker.sendMessage("§cTarget is in another dimension! Rerun the command when you are in the same dimension.");
+                    tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                            TextComponent.fromLegacyText(""));
                     errorTrackers.add(tracker);
                     continue;
                 }
@@ -77,11 +86,11 @@ public class TrackerManager {
                 int dist = (int) Math.round(tracker.getLocation().distance(target.getLocation()));
 
                 // build new action bar if distance changed
-                if (trackers.get(tracker).getDist() == dist) {
+                if (wrapper.getDist() == dist) {
                     tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                            TextComponent.fromLegacyText(trackers.get(tracker).getActionBar()));
+                            TextComponent.fromLegacyText(wrapper.getActionBar()));
                 } else {
-                    trackers.get(tracker).setActionBar(dist, buildActionBar(tracker, target));
+                    wrapper.setActionBar(dist, buildActionBar(tracker, target));
                     tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                             TextComponent.fromLegacyText(buildActionBar(tracker, target)));
                 }
@@ -99,9 +108,11 @@ public class TrackerManager {
                 * either way, better safe than constant NPEs in the console!
                  */
                 if (compassMeta == null) {
-                    tracker.getInventory().setItem(itemIndex, null);
-                    errorTrackers.add(tracker);
+                    inv.setItem(itemIndex, null);
                     tracker.sendMessage("§cYour tracking compass was removed!");
+                    tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                            TextComponent.fromLegacyText(""));
+                    errorTrackers.add(tracker);
                     continue;
                 }
 
@@ -122,6 +133,13 @@ public class TrackerManager {
 
                     compass.setItemMeta(compassMeta);
                     inv.setItem(itemIndex, compass);
+                }
+
+            } else {
+                wrapper.setCompassState(false);
+                if (wrapper.getTimeWithoutCompass() > (10*1000)) {
+                    tracker.sendMessage("§cYour tracking was stopped because a tracking compass could not be found in your inventory!");
+                    errorTrackers.add(tracker);
                 }
             }
         }
