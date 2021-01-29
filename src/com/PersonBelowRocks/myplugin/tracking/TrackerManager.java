@@ -24,17 +24,13 @@ public class TrackerManager {
 
     public static void track() {
 
-        boolean hasCompass;
-        int itemIndex;
-
         for (Player tracker : trackers.keySet()) { // CYCLE THROUGH ALL REGISTERED TRACKERS
 
             // init stuff
             Wrapper wrapper = trackers.get(tracker);
-
             Player target = wrapper.getPlayer();
             Inventory inv = tracker.getInventory();
-            itemIndex = wrapper.getSlot();
+            int itemIndex = wrapper.getSlot();
 
             // determine position and existence of compass in player inventory
             if (!Utils.itemLoreContains(
@@ -43,16 +39,31 @@ public class TrackerManager {
                 try {
                     itemIndex = Utils.getIndexFromLore(inv, requiredLore);
                     wrapper.setSlot(itemIndex);
-                    hasCompass = true;
+                    wrapper.setCompassState(true);
                 } catch (NullPointerException e) {
-                    hasCompass = false;
+                    wrapper.setCompassState(false);
                 }
             } else {
-                hasCompass = true;
+                wrapper.setCompassState(true);
             }
 
             // does our player have a compass?
-            if (hasCompass) {
+            if (wrapper.getCompassState()) {
+
+                // calculate distance
+                int dist = (int) Math.round(tracker.getLocation().distance(target.getLocation()));
+
+                // get compass & compass meta
+                ItemStack compass = inv.getItem(itemIndex);
+                CompassMeta compassMeta = (CompassMeta) compass.getItemMeta();
+
+                // remove if compass metadata somehow vanished
+                if (compassMeta == null) {
+                    inv.setItem(itemIndex, null);
+                    errorTrackers.put(tracker, "§cYour tracking compass was removed!");
+                    continue;
+                }
+
                 // handle if target logged off
                 if (!target.isOnline()) {
                     inv.setItem(itemIndex, null);
@@ -67,17 +78,12 @@ public class TrackerManager {
                     continue;
                 }
 
-                wrapper.setCompassState(true);
-
                 // handle if carrier and target are in different dimensions
                 if (!tracker.getWorld().getEnvironment().equals(target.getWorld().getEnvironment())) {
                     inv.setItem(itemIndex, null);
                     errorTrackers.put(tracker, "§cTarget is in another dimension! Rerun the command when you are in the same dimension.");
                     continue;
                 }
-
-                // calculate distance
-                int dist = (int) Math.round(tracker.getLocation().distance(target.getLocation()));
 
                 // build new action bar if distance changed
                 if (wrapper.getDist() == dist) {
@@ -89,25 +95,6 @@ public class TrackerManager {
                             TextComponent.fromLegacyText(buildActionBar(tracker, target)));
                 }
 
-                // get compass & compass meta
-                ItemStack compass = inv.getItem(itemIndex);
-                CompassMeta compassMeta = (CompassMeta) compass.getItemMeta();
-
-                /*
-                * remove compass if compassMeta is null
-                * this can happen if:
-                * A. minecraft does something.. well.. minecrafty and messes up the metadata
-                * B. the player in question used a custom item editor and removed the metadata (i think)
-                *
-                * either way, better safe than constant NPEs in the console!
-                 */
-                if (compassMeta == null) {
-                    inv.setItem(itemIndex, null);
-                    errorTrackers.put(tracker, "§cYour tracking compass was removed!");
-                    continue;
-                }
-
-                // lol
                 try {
                     float targetDistanceMoved = (float) target.getLocation().distance(Objects.requireNonNull(compassMeta.getLodestone()));
                     if (targetDistanceMoved > 1.2f) {
@@ -119,6 +106,7 @@ public class TrackerManager {
                         inv.setItem(itemIndex, compass);
                     }
                 } catch (NullPointerException e) {
+
                     compassMeta.setLodestoneTracked(false);
                     compassMeta.setLodestone(target.getLocation());
 

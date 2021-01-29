@@ -40,6 +40,10 @@ public class Wrapper {
         else return 0;
     }
 
+    public boolean getCompassState() {
+        return this.compassState;
+    }
+
     // setters
     public void setSlot(int slot) {
         this.slot = slot;
