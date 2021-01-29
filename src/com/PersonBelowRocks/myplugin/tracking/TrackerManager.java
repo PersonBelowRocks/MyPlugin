@@ -18,7 +18,7 @@ import static com.PersonBelowRocks.myplugin.tracking.ActionBar.buildActionBar;
 public class TrackerManager {
 
     private static final HashMap<Player, Wrapper> trackers = new HashMap<>();
-    private static final LinkedList<Player> errorTrackers = new LinkedList<>();
+    private static final HashMap<Player, String> errorTrackers = new HashMap<>();
 
     private static final String requiredLore = "§8item tracking_compass";
 
@@ -56,17 +56,14 @@ public class TrackerManager {
                 // handle if target logged off
                 if (!target.isOnline()) {
                     inv.setItem(itemIndex, null);
-                    tracker.sendMessage("§cTarget logged off!");
-                    tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                            TextComponent.fromLegacyText(""));
-                    errorTrackers.add(tracker);
+                    errorTrackers.put(tracker, "§cTarget logged off!");
                     continue;
                 }
 
                 // handle if compass carrier / tracker logged off
                 if (!tracker.isOnline()) {
                     inv.setItem(itemIndex, null);
-                    errorTrackers.add(tracker);
+                    errorTrackers.put(tracker, "");
                     continue;
                 }
 
@@ -75,10 +72,7 @@ public class TrackerManager {
                 // handle if carrier and target are in different dimensions
                 if (!tracker.getWorld().getEnvironment().equals(target.getWorld().getEnvironment())) {
                     inv.setItem(itemIndex, null);
-                    tracker.sendMessage("§cTarget is in another dimension! Rerun the command when you are in the same dimension.");
-                    tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                            TextComponent.fromLegacyText(""));
-                    errorTrackers.add(tracker);
+                    errorTrackers.put(tracker, "§cTarget is in another dimension! Rerun the command when you are in the same dimension.");
                     continue;
                 }
 
@@ -109,10 +103,7 @@ public class TrackerManager {
                  */
                 if (compassMeta == null) {
                     inv.setItem(itemIndex, null);
-                    tracker.sendMessage("§cYour tracking compass was removed!");
-                    tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                            TextComponent.fromLegacyText(""));
-                    errorTrackers.add(tracker);
+                    errorTrackers.put(tracker, "§cYour tracking compass was removed!");
                     continue;
                 }
 
@@ -138,16 +129,25 @@ public class TrackerManager {
             } else {
                 wrapper.setCompassState(false);
                 if (wrapper.getTimeWithoutCompass() > (10*1000)) {
-                    tracker.sendMessage("§cYour tracking was stopped because a tracking compass could not be found in your inventory!");
-                    errorTrackers.add(tracker);
+                    errorTrackers.put(tracker, "§cYour tracking was stopped because a tracking compass could not be found in your inventory!");
                 }
             }
         }
 
         // remove trackers with problems (target or carrier offline, target and carrier in different dimensions)
         if (!errorTrackers.isEmpty()) {
-            for (Player errorTracker : errorTrackers) {
+            for (Player errorTracker : errorTrackers.keySet()) {
+                String notif = errorTrackers.get(errorTracker);
                 trackers.remove(errorTracker);
+
+                // notify tracker why their tracking stopped if a reason is provided
+                // (there will always be a reason provided, unless the tracker logged off in which case there is no point in sending them a message)
+                if (!notif.equals("")) {
+                    errorTracker.sendMessage(notif);
+                    // clear their action bar
+                    errorTracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                            TextComponent.fromLegacyText(""));
+                }
             }
             errorTrackers.clear();
         }
