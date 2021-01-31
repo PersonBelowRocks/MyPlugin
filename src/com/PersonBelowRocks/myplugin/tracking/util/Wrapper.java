@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 public class Wrapper {
 
-    private Player player;
+    private final Player player;
     private int slot;
     private int dist;
     private String actionBar;

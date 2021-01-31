@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static com.PersonBelowRocks.myplugin.tracking.ActionBar.buildActionBar;
@@ -126,7 +126,14 @@ public class TrackerManager {
         if (!errorTrackers.isEmpty()) {
             for (Player errorTracker : errorTrackers.keySet()) {
                 String notif = errorTrackers.get(errorTracker);
+
                 trackers.remove(errorTracker);
+
+                try {
+                    Inventory inv = errorTracker.getInventory();
+                    int itemIndex = Utils.getIndexFromLore(inv, "§8item tracking_compass");
+                    inv.setItem(itemIndex, null);
+                } catch (NullPointerException ignored) {}
 
                 // notify tracker why their tracking stopped if a reason is provided
                 // (there will always be a reason provided, unless the tracker logged off in which case there is no point in sending them a message)
@@ -141,19 +148,37 @@ public class TrackerManager {
         }
     }
 
-    public static void trackPlayer(Player carrier, Player target) {
-        int dist = (int) Math.round(carrier.getLocation().distance(target.getLocation()));
+    public static void trackPlayer(Player tracker, Player target) {
+        int dist = (int) Math.round(tracker.getLocation().distance(target.getLocation()));
 
-        if (trackers.containsKey(carrier)) {
-            Wrapper wrap = new Wrapper(target, 0);
-            wrap.setActionBar(dist, buildActionBar(carrier, target));
-            trackers.replace(carrier, wrap);
+        if (trackers.containsKey(tracker)) {
+            Wrapper wrapper = new Wrapper(target, 0);
+            wrapper.setActionBar(dist, buildActionBar(tracker, target));
+            trackers.replace(tracker, wrapper);
 
         } else {
-            Wrapper wrap = new Wrapper(target, 0);
-            wrap.setActionBar(dist, buildActionBar(carrier, target));
-            trackers.put(carrier, wrap);
+            Wrapper wrapper = new Wrapper(target, 0);
+            wrapper.setActionBar(dist, buildActionBar(tracker, target));
+            trackers.put(tracker, wrapper);
 
         }
+    }
+
+    public static void untrackPlayer(Player tracker, String notif) {
+        if (!trackers.containsKey(tracker)) {
+            throw new NullPointerException("not a tracker");
+        }
+        errorTrackers.put(tracker, notif);
+    }
+
+    public static boolean isTracker(Player tracker) {
+        return trackers.containsKey(tracker);
+    }
+
+    public static Wrapper getWrapper(Player tracker) {
+        if (!trackers.containsKey(tracker)) {
+            throw new NoSuchElementException();
+        }
+        return trackers.get(tracker);
     }
 }

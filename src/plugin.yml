@@ -11,3 +11,19 @@ commands:
   track:
     description: Get a player tracker
     usage: /<command> [target username]
+
+  untrack:
+    description: Stop tracking
+    usage: /<command>
+
+# PERMISSIONS
+permissions:
+  playertracker.track:
+    description: Track other other.
+    default: true
+  playertracker.untrack:
+    description: Stop tracking.
+    default: true
+  playertracker.reload:
+    description: Reload configuration.
+    default: op

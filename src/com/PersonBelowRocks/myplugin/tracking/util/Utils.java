@@ -23,4 +23,15 @@ public class Utils {
             return false;
         }
     }
+
+    public static boolean hasItemWithLore(Inventory inv, String lore) {
+        for (ItemStack item : inv) {
+            try {
+                if (item.getItemMeta().getLore().contains(lore)) {
+                    return true;
+                }
+            } catch (NullPointerException ignored) {}
+        }
+        return false;
+    }
 }
