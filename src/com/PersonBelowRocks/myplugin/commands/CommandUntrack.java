@@ -33,7 +33,6 @@ public class CommandUntrack implements CommandExecutor {
         Player target = TrackerManager.getWrapper(tracker).getPlayer();
 
         TrackerManager.untrackPlayer(tracker, "§eNo longer tracking " + target.getName());
-        Inventory inv = tracker.getInventory();
         return true;
     }
 

@@ -59,28 +59,24 @@ public class TrackerManager {
 
                 // remove if compass metadata somehow vanished
                 if (compassMeta == null) {
-                    inv.setItem(itemIndex, null);
                     errorTrackers.put(tracker, "§cYour tracking compass was removed!");
                     continue;
                 }
 
                 // handle if target logged off
                 if (!target.isOnline()) {
-                    inv.setItem(itemIndex, null);
                     errorTrackers.put(tracker, "§cTarget logged off!");
                     continue;
                 }
 
                 // handle if compass carrier / tracker logged off
                 if (!tracker.isOnline()) {
-                    inv.setItem(itemIndex, null);
                     errorTrackers.put(tracker, "");
                     continue;
                 }
 
                 // handle if carrier and target are in different dimensions
                 if (!tracker.getWorld().getEnvironment().equals(target.getWorld().getEnvironment())) {
-                    inv.setItem(itemIndex, null);
                     errorTrackers.put(tracker, "§cTarget is in another dimension! Rerun the command when you are in the same dimension.");
                     continue;
                 }
