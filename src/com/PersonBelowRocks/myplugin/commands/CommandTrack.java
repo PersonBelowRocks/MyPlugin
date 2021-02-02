@@ -1,7 +1,6 @@
 package com.PersonBelowRocks.myplugin.commands;
 
 import com.PersonBelowRocks.myplugin.Configuration;
-import com.PersonBelowRocks.myplugin.MyPlugin;
 import com.PersonBelowRocks.myplugin.items.ItemManager;
 import com.PersonBelowRocks.myplugin.tracking.TrackerManager;
 import com.PersonBelowRocks.myplugin.tracking.util.Utils;
@@ -11,8 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-
-import java.util.HashMap;
 
 import static org.bukkit.Bukkit.getPlayer;
 

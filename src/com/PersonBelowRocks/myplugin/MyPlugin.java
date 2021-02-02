@@ -15,7 +15,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-// todo: add /untrack command
 public class MyPlugin extends JavaPlugin {
 
     private final PluginManager pm = getServer().getPluginManager();
@@ -56,5 +55,4 @@ public class MyPlugin extends JavaPlugin {
     public void onDisable() {
         console.sendMessage(ChatColor.RED + "[MyPlugin] Is disabled!");
     }
-    // TODO: config lmao
 }

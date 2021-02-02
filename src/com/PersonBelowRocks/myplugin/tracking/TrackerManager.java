@@ -1,7 +1,6 @@
 package com.PersonBelowRocks.myplugin.tracking;
 
 import com.PersonBelowRocks.myplugin.Configuration;
-import com.PersonBelowRocks.myplugin.MyPlugin;
 import com.PersonBelowRocks.myplugin.tracking.util.Utils;
 import com.PersonBelowRocks.myplugin.tracking.util.Wrapper;
 import net.md_5.bungee.api.ChatMessageType;

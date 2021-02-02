@@ -1,11 +1,7 @@
 package com.PersonBelowRocks.myplugin.tracking;
 
 import com.PersonBelowRocks.myplugin.Configuration;
-import com.PersonBelowRocks.myplugin.MyPlugin;
 import org.bukkit.entity.Player;
-
-import java.text.MessageFormat;
-import java.util.Locale;
 
 public class ActionBar {
 
