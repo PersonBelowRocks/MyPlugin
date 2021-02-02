@@ -1,22 +1,21 @@
-join-message: true
+# Tracking plugin written by PersonBelowRocks#1980
+# CONFIG DOCUMENTATION:
+# todo: add documentation lmao
+#
+#
+notif-now-tracking: "&eYou are now tracking £target£"
+notif-tracking-stopped: "&eYou are no longer tracking £target£"
+error-compass-meta: "&cYour tracking compass was removed!"
+error-target-offline: "&cTarget logged off!"
+error-different-dimension: "&cTarget is in another dimension! Rerun the command when you are in the same dimension."
+error-self-track: "&cYou can't track yourself!"
+error-not-player: "&cOnly players can use this command!"
+error-no-perms: "&cYou don't have permission to use this command!"
+error-wrong-usage: "&cIncorrect usage!"
+error-wrong-target: "&cThat player does not exist!"
+error-already-tracking: "&cYou are already tracking £target£!"
+error-no-compass: "&cYour tracking was stopped because a tracking compass could not be found in your inventory!"
+error-isnt-tracker: "&cYou are not tracking anyone!"
 
-# Plugin message chat prefix:
-
-# Notification messages:
-notif-now-tracking: "§eYou are now tracking £target£"
-
-# Error messages:
-error-compass-meta: "§cYour tracking compass was removed!"
-error-target-offline: "§cTarget logged off!"
-error-different-dimension: "§cTarget is in another dimension! Rerun the command when you are in the same dimension."
-error-self-track: "§cYou can't track yourself!"
-error-not-player: "§cOnly players can use this command!"
-error-no-perms: "§cYou don't have permission to use this command!"
-error-wrong-usage: "§cIncorrect usage!"
-error-wrong-target: "§cThat player does not exist!"
-error-already-tracking: "§cYou are already tracking £target£!"
-error-no-compass: "§cYour tracking was stopped because a tracking compass could not be found in your inventory!"
-
-# Action bar:
-low-detail: "§a< £target£ | §6dist: £distance£m §a>"
-high-detail: "§a< £target£ §c£progressbar£ §6Δy: £deltay£ | dist: £distance£m §a>"
+low-detail: "&a< £target£ | &6dist: £distance£m &a>"
+high-detail: "&a< £target£ &c£progressbar£ &6Δy: £deltay£ | dist: £distance£m &a>"

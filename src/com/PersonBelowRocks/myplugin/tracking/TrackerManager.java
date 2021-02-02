@@ -1,5 +1,6 @@
 package com.PersonBelowRocks.myplugin.tracking;
 
+import com.PersonBelowRocks.myplugin.Configuration;
 import com.PersonBelowRocks.myplugin.MyPlugin;
 import com.PersonBelowRocks.myplugin.tracking.util.Utils;
 import com.PersonBelowRocks.myplugin.tracking.util.Wrapper;
@@ -24,22 +25,10 @@ public class TrackerManager {
 
     private static final String requiredLore = "§8item tracking_compass";
 
-    private static MyPlugin plugin;
+    private static Configuration cfg;
 
-    private static HashMap<String, String> messages = new HashMap<>();
-    private static String[] configKeys = {
-            "error-compass-meta",
-            "error-target-offline",
-            "error-different-dimension",
-            "error-no-compass"
-    };
-
-    public static void init(MyPlugin p) {
-        plugin = p;
-
-        for (String key : configKeys) {
-            messages.put(key, plugin.getConfig().getString(key));
-        }
+    public static void init(Configuration c) {
+        cfg = c;
     }
 
     public static void track() {
@@ -74,13 +63,13 @@ public class TrackerManager {
 
                 // remove if compass metadata somehow vanished
                 if (compassMeta == null) {
-                    errorTrackers.put(tracker, messages.get("error-compass-meta"));
+                    errorTrackers.put(tracker, cfg.getString("error-compass-meta"));
                     continue;
                 }
 
                 // handle if target logged off
                 if (!target.isOnline()) {
-                    errorTrackers.put(tracker, messages.get("error-target-offline"));
+                    errorTrackers.put(tracker, cfg.getString("error-target-offline"));
                     continue;
                 }
 
@@ -92,7 +81,7 @@ public class TrackerManager {
 
                 // handle if carrier and target are in different dimensions
                 if (!tracker.getWorld().getEnvironment().equals(target.getWorld().getEnvironment())) {
-                    errorTrackers.put(tracker, messages.get("error-different-dimension"));
+                    errorTrackers.put(tracker, cfg.getString("error-different-dimension"));
                     continue;
                 }
 
@@ -129,7 +118,7 @@ public class TrackerManager {
             } else {
                 wrapper.setCompassState(false);
                 if (wrapper.getTimeWithoutCompass() > (10*1000)) {
-                    errorTrackers.put(tracker, messages.get("error-no-compass"));
+                    errorTrackers.put(tracker, cfg.getString("error-no-compass"));
                 }
             }
         }
@@ -143,7 +132,7 @@ public class TrackerManager {
 
                 try {
                     Inventory inv = errorTracker.getInventory();
-                    int itemIndex = Utils.getIndexFromLore(inv, "§8item tracking_compass");
+                    int itemIndex = Utils.getIndexFromLore(inv, requiredLore);
                     inv.setItem(itemIndex, null);
                 } catch (NullPointerException ignored) {}
 

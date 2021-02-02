@@ -1,5 +1,6 @@
 package com.PersonBelowRocks.myplugin.tracking;
 
+import com.PersonBelowRocks.myplugin.Configuration;
 import com.PersonBelowRocks.myplugin.MyPlugin;
 import org.bukkit.entity.Player;
 
@@ -10,16 +11,13 @@ public class ActionBar {
 
     private final static int remain = 105;
 
-    private static MyPlugin plugin;
+    private static Configuration cfg;
 
     private static String lowDetail;
     private static String highDetail;
 
-    public static void init(MyPlugin p) {
-        plugin = p;
-
-        lowDetail = plugin.getConfig().getString("low-detail");
-        highDetail = plugin.getConfig().getString("high-detail");
+    public static void init(Configuration c) {
+        cfg = c;
     }
 
     public static String progressBar(int pRemain, int total) {
@@ -44,10 +42,11 @@ public class ActionBar {
         String name = target.getName();
 
         String template;
+
         if (dist <= 105) {
-            template = highDetail;
+            template = cfg.getString("high-detail");
         } else {
-            template = lowDetail;
+            template = cfg.getString("low-detail");
         }
 
         if (template.contains("£target£")) {

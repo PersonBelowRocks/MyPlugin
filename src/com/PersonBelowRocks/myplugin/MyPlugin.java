@@ -1,5 +1,6 @@
 package com.PersonBelowRocks.myplugin;
 
+import com.PersonBelowRocks.myplugin.commands.CommandReload;
 import com.PersonBelowRocks.myplugin.commands.CommandTrack;
 import com.PersonBelowRocks.myplugin.commands.CommandUntrack;
 import com.PersonBelowRocks.myplugin.commands.CommandWand;
@@ -25,14 +26,18 @@ public class MyPlugin extends JavaPlugin {
         this.getConfig().options().copyDefaults(true);
         this.saveConfig();
 
-        TrackerManager.init(this);
-        ActionBar.init(this);
+        Configuration cfg = new Configuration(this);
+        cfg.loadConfig();
+
+        TrackerManager.init(cfg);
+        ActionBar.init(cfg);
 
         ItemManager.init();
 
         getCommand("getwand").setExecutor(new CommandWand());
-        getCommand("track").setExecutor(new CommandTrack(this));
-        getCommand("untrack").setExecutor(new CommandUntrack());
+        getCommand("track").setExecutor(new CommandTrack(cfg));
+        getCommand("untrack").setExecutor(new CommandUntrack(cfg));
+        getCommand("trackreload").setExecutor(new CommandReload(cfg, this));
 
         pm.registerEvents(new JoinGreeting(this), this);
         pm.registerEvents(new WandFunctionality(), this);
