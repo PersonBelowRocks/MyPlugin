@@ -9,9 +9,6 @@ public class ActionBar {
 
     private static Configuration cfg;
 
-    private static String lowDetail;
-    private static String highDetail;
-
     public static void init(Configuration c) {
         cfg = c;
     }
