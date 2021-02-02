@@ -1,5 +1,6 @@
 package com.PersonBelowRocks.myplugin.tracking;
 
+import com.PersonBelowRocks.myplugin.MyPlugin;
 import com.PersonBelowRocks.myplugin.tracking.util.Utils;
 import com.PersonBelowRocks.myplugin.tracking.util.Wrapper;
 import net.md_5.bungee.api.ChatMessageType;
@@ -14,6 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static com.PersonBelowRocks.myplugin.tracking.ActionBar.buildActionBar;
+import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 public class TrackerManager {
 
@@ -22,8 +24,25 @@ public class TrackerManager {
 
     private static final String requiredLore = "§8item tracking_compass";
 
-    public static void track() {
+    private static MyPlugin plugin;
 
+    private static HashMap<String, String> messages = new HashMap<>();
+    private static String[] configKeys = {
+            "error-compass-meta",
+            "error-target-offline",
+            "error-different-dimension",
+            "error-no-compass"
+    };
+
+    public static void init(MyPlugin p) {
+        plugin = p;
+
+        for (String key : configKeys) {
+            messages.put(key, plugin.getConfig().getString(key));
+        }
+    }
+
+    public static void track() {
         for (Player tracker : trackers.keySet()) { // CYCLE THROUGH ALL REGISTERED TRACKERS
 
             // init stuff
@@ -49,23 +68,19 @@ public class TrackerManager {
 
             // does our player have a compass?
             if (wrapper.getCompassState()) {
-
-                // calculate distance
-                int dist = (int) Math.round(tracker.getLocation().distance(target.getLocation()));
-
                 // get compass & compass meta
                 ItemStack compass = inv.getItem(itemIndex);
                 CompassMeta compassMeta = (CompassMeta) compass.getItemMeta();
 
                 // remove if compass metadata somehow vanished
                 if (compassMeta == null) {
-                    errorTrackers.put(tracker, "§cYour tracking compass was removed!");
+                    errorTrackers.put(tracker, messages.get("error-compass-meta"));
                     continue;
                 }
 
                 // handle if target logged off
                 if (!target.isOnline()) {
-                    errorTrackers.put(tracker, "§cTarget logged off!");
+                    errorTrackers.put(tracker, messages.get("error-target-offline"));
                     continue;
                 }
 
@@ -77,9 +92,12 @@ public class TrackerManager {
 
                 // handle if carrier and target are in different dimensions
                 if (!tracker.getWorld().getEnvironment().equals(target.getWorld().getEnvironment())) {
-                    errorTrackers.put(tracker, "§cTarget is in another dimension! Rerun the command when you are in the same dimension.");
+                    errorTrackers.put(tracker, messages.get("error-different-dimension"));
                     continue;
                 }
+
+                // calculate distance
+                int dist = (int) Math.round(tracker.getLocation().distance(target.getLocation()));
 
                 // build new action bar if distance changed
                 if (wrapper.getDist() == dist) {
@@ -99,7 +117,6 @@ public class TrackerManager {
                         compassMeta.setLodestone(target.getLocation());
 
                         compass.setItemMeta(compassMeta);
-                        inv.setItem(itemIndex, compass);
                     }
                 } catch (NullPointerException e) {
 
@@ -107,13 +124,12 @@ public class TrackerManager {
                     compassMeta.setLodestone(target.getLocation());
 
                     compass.setItemMeta(compassMeta);
-                    inv.setItem(itemIndex, compass);
                 }
 
             } else {
                 wrapper.setCompassState(false);
                 if (wrapper.getTimeWithoutCompass() > (10*1000)) {
-                    errorTrackers.put(tracker, "§cYour tracking was stopped because a tracking compass could not be found in your inventory!");
+                    errorTrackers.put(tracker, messages.get("error-no-compass"));
                 }
             }
         }
