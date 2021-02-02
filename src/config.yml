@@ -16,3 +16,7 @@ error-wrong-usage: "§cIncorrect usage!"
 error-wrong-target: "§cThat player does not exist!"
 error-already-tracking: "§cYou are already tracking £target£!"
 error-no-compass: "§cYour tracking was stopped because a tracking compass could not be found in your inventory!"
+
+# Action bar:
+low-detail: "§a< £target£ | §6dist: £distance£m §a>"
+high-detail: "§a< £target£ §c£progressbar£ §6Δy: £deltay£ | dist: £distance£m §a>"

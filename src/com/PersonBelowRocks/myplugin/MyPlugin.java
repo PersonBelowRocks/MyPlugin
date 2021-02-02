@@ -6,6 +6,7 @@ import com.PersonBelowRocks.myplugin.commands.CommandWand;
 import com.PersonBelowRocks.myplugin.events.JoinGreeting;
 import com.PersonBelowRocks.myplugin.events.WandFunctionality;
 import com.PersonBelowRocks.myplugin.items.ItemManager;
+import com.PersonBelowRocks.myplugin.tracking.ActionBar;
 import com.PersonBelowRocks.myplugin.tracking.TrackerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -25,6 +26,7 @@ public class MyPlugin extends JavaPlugin {
         this.saveConfig();
 
         TrackerManager.init(this);
+        ActionBar.init(this);
 
         ItemManager.init();
 
