@@ -5,7 +5,6 @@ import com.PersonBelowRocks.myplugin.items.ItemManager;
 import com.PersonBelowRocks.myplugin.tracking.TrackerManager;
 import com.PersonBelowRocks.myplugin.tracking.util.Utils;
 import com.PersonBelowRocks.myplugin.tracking.util.Wrapper;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,8 +19,8 @@ import static org.bukkit.Bukkit.getPlayer;
 public class CommandTrack implements CommandExecutor {
     private static MyPlugin plugin;
 
-    private static HashMap<String, String> messages = new HashMap<>();
-    private static String[] configKeys = {
+    private static final HashMap<String, String> messages = new HashMap<>();
+    private static final String[] configKeys = {
             "error-self-track",
             "error-not-player",
             "error-no-perms",
@@ -44,7 +43,6 @@ public class CommandTrack implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
         if (!(sender instanceof Player)) {
-            //sender.sendMessage(ChatColor.RED + "Sorry! Only players are able to do that!");
             sender.sendMessage(messages.get("error-not-player"));
             return true;
         }
@@ -52,12 +50,10 @@ public class CommandTrack implements CommandExecutor {
         Player tracker = (Player) sender;
 
         if (!tracker.hasPermission("playertracker.track")) {
-            //sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
             sender.sendMessage(messages.get("error-no-perms"));
             return true;
         }
         if (args.length != 1) {
-            //sender.sendMessage(ChatColor.RED + "Usage: /track <target>");
             sender.sendMessage(messages.get("error-wrong-usage"));
             return true;
         }
@@ -65,7 +61,6 @@ public class CommandTrack implements CommandExecutor {
         Player target = getPlayer(args[0]);
 
         if (target == null) {
-            //sender.sendMessage(ChatColor.RED + "Target does not exist!");
             sender.sendMessage(messages.get("error-wrong-target"));
             return true;
         }
@@ -78,20 +73,26 @@ public class CommandTrack implements CommandExecutor {
         if (TrackerManager.isTracker(tracker)) {
             Wrapper wrapper = TrackerManager.getWrapper(tracker);
             if (wrapper.getPlayer().equals(target)) {
-                //tracker.sendMessage("§cAlready tracking " + target.getName() + "!");
-                sender.sendMessage(messages.get("error-already-tracking").replaceAll("£target£", target.getName()));
-                return true;
+                if (messages.get("error-already-tracking").contains("£target£")) {
+                    sender.sendMessage(messages.get("error-already-tracking").replaceAll("£target£", target.getName()));
+                } else {
+                    sender.sendMessage(messages.get("error-already-tracking"));
+                }
+
             } else {
-                //tracker.sendMessage("§eNow tracking " + target.getName());
-                tracker.sendMessage(messages.get("notif-now-tracking").replaceAll("£target£", target.getName()));
+                if (messages.get("notif-now-tracking").contains("£target£")) {
+                    sender.sendMessage(messages.get("notif-now-tracking").replaceAll("£target£", target.getName()));
+                } else {
+                    sender.sendMessage(messages.get("notif-now-tracking"));
+                }
+
                 TrackerManager.trackPlayer(tracker, target);
-                return true;
             }
+            return true;
         }
 
         Inventory inv = tracker.getInventory();
 
-        // tracker.sendMessage("§eNow tracking " + target.getName());
         tracker.sendMessage(messages.get("notif-now-tracking").replaceAll("£target£", target.getName()));
         if (!Utils.hasItemWithLore(inv, "§8item tracking_compass") && !TrackerManager.isTracker(tracker)) {
             tracker.getInventory().addItem(ItemManager.trackingCompass);

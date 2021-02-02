@@ -18,30 +18,8 @@ public class ActionBar {
     public static void init(MyPlugin p) {
         plugin = p;
 
-        /*
-        LOW DETAIL:
-        §a< £target£ | §6dist: £distance£m §a>
-
-        HIGH DETAIL:
-        §a< £target£ §c£progressbar£ §6£Δy: £deltaY£ | dist: £distance£m §a>
-
-        target = {0}
-        progress bar = {1}
-        deltaY = {2}
-        distance = {3}
-         */
         lowDetail = plugin.getConfig().getString("low-detail");
         highDetail = plugin.getConfig().getString("high-detail");
-        /*
-        lowDetail = lowDetail.replaceAll("£target£", "{0}");
-        lowDetail = lowDetail.replaceAll("£progressbar£", "{1}");
-        lowDetail = lowDetail.replaceAll("£deltay£", "{2}");
-        lowDetail = lowDetail.replaceAll("£distance£", "{3}");
-
-        highDetail = highDetail.replaceAll("£target£", "{0}");
-        highDetail = highDetail.replaceAll("£progressbar£", "{1}");
-        highDetail = highDetail.replaceAll("£deltay£", "{2}");
-        highDetail = highDetail.replaceAll("£distance£", "{3}");*/
     }
 
     public static String progressBar(int pRemain, int total) {
@@ -65,18 +43,6 @@ public class ActionBar {
         int deltaY = (int) Math.round(target.getLocation().getY() - tracker.getLocation().getY());
         String name = target.getName();
 
-        /*
-        HIGH DETAIL:
-        §a< £target£ §c£progressbar£ §6£Δy: £deltaY£ | dist: £distance£m §a>
-
-        LOW DETAIL:
-        §a< £target£ | §6dist: £distance£m §a>
-
-        target = {0}
-        progress bar = {1}
-        deltaY = {2}
-        distance = {3}
-         */
         String template;
         if (dist <= 105) {
             template = highDetail;
@@ -98,21 +64,5 @@ public class ActionBar {
         }
 
         return template;
-        /*
-        if (dist <= 105) {
-
-        } else {
-            return MessageFormat.format(lowDetail,
-                    name,
-                    progressBar(remain - Math.abs(dist - 5), remain),
-                    deltaY,
-                    dist);
-        }
-
-        return MessageFormat.format("§a< {0} §c{1} §6{2}dist: {3}m §a>",
-                name,
-                (dist <= 105 ? progressBar(remain - Math.abs(dist - 5), remain) : "§a|"),
-                (dist <= 105 ? "Δy: " + deltaY + " | " : ""),
-                dist);*/
     }
 }
