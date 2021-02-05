@@ -1,8 +1,8 @@
 package com.PersonBelowRocks.myplugin.tracking;
 
 import com.PersonBelowRocks.myplugin.Configuration;
-import com.PersonBelowRocks.myplugin.tracking.util.Utils;
-import com.PersonBelowRocks.myplugin.tracking.util.Wrapper;
+import com.PersonBelowRocks.myplugin.util.Utils;
+import com.PersonBelowRocks.myplugin.util.Wrapper;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;

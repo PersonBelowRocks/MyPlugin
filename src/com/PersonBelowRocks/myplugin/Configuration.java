@@ -2,8 +2,6 @@ package com.PersonBelowRocks.myplugin;
 
 import java.util.HashMap;
 
-import static org.bukkit.Bukkit.getServer;
-
 public class Configuration {
     private static final String[] configMessageKeys = {
             "error-compass-meta",
@@ -24,6 +22,8 @@ public class Configuration {
     };
 
     private final MyPlugin plugin;
+
+    // we'll use this HashMap to store and get messages from because it's faster than the bukkit config
     private final HashMap<String, String> messages;
 
     public Configuration(MyPlugin plugin) {
@@ -41,10 +41,9 @@ public class Configuration {
 
         for (String key : configMessageKeys) {
             String raw = this.plugin.getConfig().getString(key);
+
+            // replace ampersands with section signs for color codes
             raw = raw.replaceAll("\\&", "\u00A7");
-
-            getServer().getConsoleSender().sendMessage(raw);
-
             this.messages.put(key, raw);
         }
     }
