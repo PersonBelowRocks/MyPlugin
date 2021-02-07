@@ -21,6 +21,9 @@ import static org.bukkit.Bukkit.getServer;
 
 public class WandFunctionality implements Listener {
 
+    // Material.GRASS, Material.TALL_GRASS, Material.WATER, Material.LAVA, Material.SUNFLOWER, Material.PEONY, Material.ROSE_BUSH
+    private static final HashSet<Material> nonSolids = new HashSet<>();
+
     private static final double beamVerticalModifier = 1.2;
     private static final float scalarIncrement = 0.01f;
     private static final double damage = 5.0;
@@ -35,6 +38,17 @@ public class WandFunctionality implements Listener {
 
     @EventHandler
     public static void onRightClick(PlayerInteractEvent event) {
+        nonSolids.add(Material.GRASS);
+        nonSolids.add(Material.TALL_GRASS);
+        nonSolids.add(Material.WATER);
+        nonSolids.add(Material.LAVA);
+        nonSolids.add(Material.SUNFLOWER);
+        nonSolids.add(Material.PEONY);
+        nonSolids.add(Material.ROSE_BUSH);
+        nonSolids.add(Material.LILAC);
+        nonSolids.add(Material.LARGE_FERN);
+        nonSolids.add(Material.AIR);
+
         Player invoker = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getItem() != null) {
@@ -48,7 +62,7 @@ public class WandFunctionality implements Listener {
                     // todo: improve performance
 
                     Location invokerLocation = invoker.getLocation();
-                    Location blockLookingAt = invoker.getTargetBlock(null, (int) Math.round(radius)).getLocation();
+                    Location blockLookingAt = invoker.getTargetBlock(nonSolids, (int) Math.round(radius)).getLocation();
                     World world = invoker.getWorld();
 
                     double pitch = (invokerLocation.getPitch() + 90) * RADIANS_CONVERSION_FACTOR;
@@ -78,6 +92,7 @@ public class WandFunctionality implements Listener {
                     protectedEntities.add(invoker.getPlayer());
 
                     world.playSound(invokerLocation, Sound.BLOCK_SHROOMLIGHT_PLACE, 2, 2);
+                    world.playSound(invokerLocation, Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 0.5f, 2);
 
                     Location particleSpawnLoc = invokerLocation;
 
@@ -110,8 +125,9 @@ public class WandFunctionality implements Listener {
                             world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, particleSpawnLoc, 0, vX, vY, vZ, 10, null, true);
                         }
                         getServer().getConsoleSender().sendMessage("ARE YOU HERE?");
+                        getServer().getConsoleSender().sendMessage(particleSpawnLoc.toString());
                         for (LivingEntity entity : nearbyEntities) {
-                            if (particleSpawnLoc.distanceSquared(entity.getLocation()) < 1 && !protectedEntities.contains(entity)) {
+                            if (particleSpawnLoc.distanceSquared(entity.getLocation()) < 2.0 && !protectedEntities.contains(entity)) {
                                 entity.damage(damage);
                                 entity.setNoDamageTicks(0);
                                 getServer().getConsoleSender().sendMessage("OR HERE?");
