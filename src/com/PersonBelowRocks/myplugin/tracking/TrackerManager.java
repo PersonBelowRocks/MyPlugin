@@ -53,6 +53,7 @@ public class TrackerManager {
                 wrapper.setCompassState(true);
             }
 
+            // todo: check if compass is null instead of compassMeta
             // does our player have a compass?
             if (wrapper.getCompassState()) {
                 // get compass & compass meta
