@@ -123,13 +123,14 @@ public class WandFunctionality implements Listener {
                         if (Utils.getRandomBoolean(0.2f)) {
                             world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, particleSpawnLoc, 0, vX, vY, vZ, 10, null, true);
                         }
-                        getServer().getConsoleSender().sendMessage("ARE YOU HERE?");
-                        getServer().getConsoleSender().sendMessage(particleSpawnLoc.toString());
+
+                        //getServer().getConsoleSender().sendMessage("ARE YOU HERE?");
+                        //getServer().getConsoleSender().sendMessage(particleSpawnLoc.toString());
                         for (LivingEntity entity : nearbyEntities) {
                             if (particleSpawnLoc.distanceSquared(entity.getLocation()) < 2.0 && !protectedEntities.contains(entity)) {
                                 entity.damage(damage);
                                 entity.setNoDamageTicks(0);
-                                getServer().getConsoleSender().sendMessage("OR HERE?");
+                                //getServer().getConsoleSender().sendMessage("OR HERE?");
                                 entity.setVelocity(knockbackVector.multiply(1.5));
 
                                 Location loc = entity.getLocation();

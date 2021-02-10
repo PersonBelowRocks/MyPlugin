@@ -53,14 +53,17 @@ public class TrackerManager {
                 wrapper.setCompassState(true);
             }
 
-            // todo: check if compass is null instead of compassMeta
             // does our player have a compass?
             if (wrapper.getCompassState()) {
+
                 // get compass & compass meta
                 ItemStack compass = inv.getItem(itemIndex);
                 CompassMeta compassMeta = (CompassMeta) compass.getItemMeta();
 
-                // remove if compass metadata somehow vanished
+                /*
+                 remove if compass metadata somehow vanished
+                 this can (presumably) happen if the player uses an item metadata editor of sorts
+                */
                 if (compassMeta == null) {
                     errorTrackers.put(tracker, cfg.getString("error-compass-meta"));
                     continue;
@@ -87,7 +90,10 @@ public class TrackerManager {
                 // calculate distance
                 int dist = (int) Math.round(tracker.getLocation().distance(target.getLocation()));
 
-                // build new action bar if distance changed
+                /*
+                 build new action bar if distance changed
+                 otherwise just use cached action bar, no need to build a new string
+                */
                 if (wrapper.getDist() == dist) {
                     tracker.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                             TextComponent.fromLegacyText(wrapper.getActionBar()));
@@ -97,8 +103,13 @@ public class TrackerManager {
                             TextComponent.fromLegacyText(buildActionBar(tracker, target)));
                 }
 
+                /*
+                 update location compass is pointing towards (lodestone) if the target moved 1.2 meters/blocks
+                 if an NPE is thrown also update the lodestone because this means that the compass
+                 somehow lost its lodestone
+                */
                 try {
-                    float targetDistanceMoved = (float) target.getLocation().distance(Objects.requireNonNull(compassMeta.getLodestone()));
+                    double targetDistanceMoved = target.getLocation().distance(Objects.requireNonNull(compassMeta.getLodestone()));
                     if (targetDistanceMoved > 1.2f) {
 
                         compassMeta.setLodestoneTracked(false);
@@ -135,8 +146,10 @@ public class TrackerManager {
                     inv.setItem(itemIndex, null);
                 } catch (NullPointerException ignored) {}
 
-                // notify tracker why their tracking stopped if a reason is provided
-                // (there will always be a reason provided, unless the tracker logged off in which case there is no point in sending them a message)
+                /*
+                 notify tracker why their tracking stopped if a reason is provided
+                 (there will always be a reason provided, unless the tracker logged off in which case there is no point in sending them a message)
+                */
                 if (!notif.equals("")) {
                     errorTracker.sendMessage(notif);
                     // clear their action bar
